@@ -6,7 +6,7 @@ data class News (
     var likes: Int = 0
 )
 
-private val newsList = listOf(
+val newsList = listOf(
     News(1, "News 1"),
     News(2, "News 2"),
     News(3, "News 3"),
