@@ -4,11 +4,17 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 
@@ -23,12 +29,11 @@ fun NewsScreen() {
 
     LaunchedEffect(Unit) {
         while (true) {
-            delay(2000)
+            delay(5000)
 
             val indexToReplace = (0 until currentNews.size).random()
 
             val availableNews = newsList.filter { it !in currentNews }
-
 
             if (availableNews.isNotEmpty()) {
                 val newNews = availableNews.random()
@@ -53,31 +58,49 @@ fun NewsScreen() {
 @Composable
 fun NewsItem(news: News) {
     var localLikes by remember(news.id) { mutableStateOf(news.likes) }
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
 
-    Column(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(420.dp)
-            .padding(8.dp),
-        verticalArrangement = Arrangement.SpaceBetween
+            .height(screenHeight * 0.45f)
+            .padding(8.dp)
+            .shadow(elevation = 8.dp, shape = RoundedCornerShape(8.dp)),
+        shape = RoundedCornerShape(8.dp),
     ) {
-        Text(
-            text = news.content,
+        Column(
             modifier = Modifier
-                .weight(1f)
-                .padding(8.dp)
-        )
-
-
-        Button(
-            onClick = {
-                localLikes++
-                news.likes = localLikes
-            },
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Likes: $localLikes")
+            Text(
+                text = news.content,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(bottom = 16.dp)
+            )
+
+            Button(
+                onClick = {
+                    localLikes++
+                    news.likes = localLikes
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(bottom = 8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                shape = RoundedCornerShape(50)
+            ) {
+                Text(
+                    text = "Likes: $localLikes",
+
+                )
+            }
         }
     }
 }
-
