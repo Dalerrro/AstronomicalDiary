@@ -2,7 +2,7 @@ package com.example.startapp
 
 data class News (
     val id: Int,
-    val content: String,
+    var content: String,
     var likes: Int = 0
 )
 

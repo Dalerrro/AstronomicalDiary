@@ -23,12 +23,13 @@ fun NewsScreen() {
 
     LaunchedEffect(Unit) {
         while (true) {
-            delay(5000)
+            delay(2000)
 
             val indexToReplace = (0 until currentNews.size).random()
 
-
             val availableNews = newsList.filter { it !in currentNews }
+
+
             if (availableNews.isNotEmpty()) {
                 val newNews = availableNews.random()
 
@@ -51,6 +52,7 @@ fun NewsScreen() {
 
 @Composable
 fun NewsItem(news: News) {
+    var localLikes by remember(news.id) { mutableStateOf(news.likes) }
 
     Column(
         modifier = Modifier
@@ -67,15 +69,14 @@ fun NewsItem(news: News) {
         )
 
 
-        var likes by remember { mutableStateOf(news.likes) }
         Button(
             onClick = {
-                likes++
-                news.likes = likes
+                localLikes++
+                news.likes = localLikes
             },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
-            Text(text = "Likes: $likes")
+            Text(text = "Likes: $localLikes")
         }
     }
 }
