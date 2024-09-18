@@ -10,6 +10,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,28 +21,9 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun NewsScreen() {
-    val currentNews = remember { mutableStateListOf<News>() }
+fun NewsScreen(viewModel: NewsViewModel = viewModel()) {
 
-    LaunchedEffect(Unit) {
-        currentNews.addAll(newsList.shuffled().take(4))
-    }
-
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(5000)
-
-            val indexToReplace = (0 until currentNews.size).random()
-
-            val availableNews = newsList.filter { it !in currentNews }
-
-            if (availableNews.isNotEmpty()) {
-                val newNews = availableNews.random()
-
-                currentNews[indexToReplace] = newNews
-            }
-        }
-    }
+    val currentNews = viewModel.currentNews
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
