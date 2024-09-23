@@ -33,10 +33,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.startapp.R
+import com.example.startapp.openGL.renderGL.MyGLSurfaceView
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun NewsScreen(viewModel: NewsViewModel = viewModel()) {
+fun NewsScreen(
+    viewModel: NewsViewModel = viewModel(),
+    onImageClick: () -> Unit // Передаем функцию, которая будет вызвана при нажатии на картинку
+) {
     val currentNews = viewModel.currentNews
 
     Box(
@@ -62,14 +66,13 @@ fun NewsScreen(viewModel: NewsViewModel = viewModel()) {
                 .align(Alignment.TopEnd)
                 .size(48.dp)
                 .clickable {
-                    // Обработка нажатия
+                    onImageClick() // Вызываем функцию при клике
                 }
                 .padding(8.dp)
                 .offset(x = 12.dp, y = (-12).dp)
         )
     }
 }
-
 
 @Composable
 fun NewsItem(news: News) {
@@ -82,7 +85,7 @@ fun NewsItem(news: News) {
             .fillMaxWidth()
             .height(screenHeight * 0.45f)
             .padding(8.dp)
-            .shadow(elevation = 8.dp, shape = RoundedCornerShape(12.dp)),
+            .shadow(elevation = 8.dp, shape = RoundedCornerShape(8.dp)),
         shape = RoundedCornerShape(8.dp),
     ) {
         Column(
@@ -94,7 +97,7 @@ fun NewsItem(news: News) {
             Text(
                 text = news.content,
                 modifier = Modifier
-                    .weight(2f)
+                    .weight(1f)
                     .padding(bottom = 16.dp)
             )
 
@@ -115,7 +118,7 @@ fun NewsItem(news: News) {
                 Text(
                     text = "Likes: $localLikes",
 
-                )
+                    )
             }
         }
     }

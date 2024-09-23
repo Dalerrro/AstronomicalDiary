@@ -10,31 +10,47 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import com.example.startapp.advert.NewsScreen
 import com.example.startapp.ui.theme.StartAppTheme
 import com.example.startapp.openGL.renderGL.MyGLSurfaceView
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             StartAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    OpenGLContent(modifier = Modifier.padding(innerPadding))
+                val navController = rememberNavController()
+                NavHost(navController = navController, startDestination = "news") {
+                    composable("news") {
+                        NewsScreen(
+                            onImageClick = { navController.navigate("opengl") }
+                        )
+                    }
+                    composable("opengl") {
+                        OpenGLContent()
+                    }
                 }
             }
         }
     }
-}
 
-@Composable
-fun OpenGLContent(modifier: Modifier = Modifier) {
-    AndroidView(
-        factory = { context ->
-            MyGLSurfaceView(context)
-        },
-        modifier = modifier.fillMaxSize() // Применяем отступы и заполняем доступное пространство
-    )
+    @Composable
+    fun OpenGLContent(modifier: Modifier = Modifier) {
+        AndroidView(
+            factory = { context ->
+                MyGLSurfaceView(context)
+            },
+            modifier = modifier.fillMaxSize()
+        )
+    }
 }

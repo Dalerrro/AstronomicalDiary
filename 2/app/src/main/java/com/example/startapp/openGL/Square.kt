@@ -17,35 +17,35 @@ class Square(private val context: Context) {
 
     // Координаты вершин квадрата (весь экран)
     private val squareCoords = floatArrayOf(
-        -1.0f, 1.0f, 0.0f,   // верхняя левая вершина
-        -1.0f, -1.0f, 0.0f,  // нижняя левая вершина
-        1.0f, -1.0f, 0.0f,   // нижняя правая вершина
-        1.0f, 1.0f, 0.0f     // верхняя правая вершина
+        -1.0f, 1.0f, 0.0f,
+        -1.0f, -1.0f, 0.0f,
+        1.0f, -1.0f, 0.0f,
+        1.0f, 1.0f, 0.0f
     )
 
     // Координаты текстуры
     private val texCoords = floatArrayOf(
-        0.0f, 0.0f,  // верхняя левая
-        0.0f, 1.0f,  // нижняя левая
-        1.0f, 1.0f,  // нижняя правая
-        1.0f, 0.0f   // верхняя правая
+        0.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f
     )
 
     private val vertexShaderCode = """
-        attribute vec4 vPosition; // Позиция вершины
-        attribute vec2 aTexCoord; // Текстурные координаты
+        attribute vec4 vPosition; 
+        attribute vec2 aTexCoord; 
         varying vec2 vTexCoord;    // Передача текстурных координат во фрагментный шейдер
 
           void main() {
-              gl_Position = vPosition; // Устанавливаем позицию вершины
-              vTexCoord = aTexCoord;  // Передаем текстурные координаты
+              gl_Position = vPosition; 
+              vTexCoord = aTexCoord;  
             }
             """.trimIndent()
 
     private val fragmentShaderCode = """
-        precision mediump float; // Задаем точность для float
-        varying vec2 vTexCoord;  // Координаты текстуры, переданные из вершинного шейдера
-        uniform sampler2D uTexture; // Указатель на текстуру
+        precision mediump float; 
+        varying vec2 vTexCoord;  
+        uniform sampler2D uTexture; 
 
          void main() {
                 // Получаем цвет из текстуры по заданным координатам
@@ -94,15 +94,15 @@ class Square(private val context: Context) {
         GLES20.glGenTextures(1, textureHandle, 0)
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle[0])
 
-        // Установка параметров текстуры
+
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR_MIPMAP_LINEAR)
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR)
 
-        // Загрузка текстуры в OpenGL
+
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
         bitmap.recycle() // Освобождаем память, так как данные уже загружены в OpenGL
 
-        // Генерация MipMap
+
         GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D)
 
         Log.d("Square", "Texture loaded: ${bitmap.width} x ${bitmap.height}")

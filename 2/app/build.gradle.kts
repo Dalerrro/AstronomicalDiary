@@ -69,6 +69,9 @@ dependencies {
 
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.navigation.compose)
+
+    implementation (libs.androidx.navigation.compose.v240)
 
 
     testImplementation(libs.junit)

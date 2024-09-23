@@ -19,11 +19,11 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
     private val modelMatrix = FloatArray(16)
 
     override fun onSurfaceCreated(gl: GL10, config: EGLConfig) {
-        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
-        GLES20.glEnable(GLES20.GL_DEPTH_TEST)
+        GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f)
 
         square = Square(context)
         cube = Cube()
+
 
         Matrix.setLookAtM(viewMatrix, 0, 0f, 0f, 5f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
         Log.d("MyGLRenderer", "Surface created: Square and Cube initialized.")
@@ -32,25 +32,26 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
     override fun onDrawFrame(gl: GL10) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
 
+        GLES20.glEnable(GLES20.GL_DEPTH_TEST)
+
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
 
         // Рисуем квадрат
         Matrix.setIdentityM(modelMatrix, 0)
-        Matrix.translateM(modelMatrix, 0, 0f, 0f, -1.5f) // Попробуйте различные значения // Увеличьте расстояние от камеры
+        Matrix.translateM(modelMatrix, 0, 0f, 0f, -1.5f)
+
 
         val scratchSquare = FloatArray(16)
         Matrix.multiplyMM(scratchSquare, 0, mvpMatrix, 0, modelMatrix, 0)
 
         GLES20.glDisable(GLES20.GL_DEPTH_TEST)
+
         Log.d("MyGLRenderer", "Drawing square with MVP matrix: ${scratchSquare.joinToString()}")
         square.draw(scratchSquare)
-        GLES20.glEnable(GLES20.GL_DEPTH_TEST)
-
 
 
         Log.d("MyGLRenderer", "Square drawn.")
 
-        // Рисуем куб
         Matrix.setIdentityM(modelMatrix, 0)
         Matrix.translateM(modelMatrix, 0, 0f, 0f, 0.0f)
         val scratchCube = FloatArray(16)

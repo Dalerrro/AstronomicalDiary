@@ -9,21 +9,21 @@ import java.nio.ShortBuffer
 
 class Cube {
 
-    // Координаты вершин куба
+
     private val cubeCoords = floatArrayOf(
-        // Передняя грань
+
         -0.5f, -0.5f, 0.5f,  // 0
         0.5f, -0.5f, 0.5f,   // 1
         0.5f, 0.5f, 0.5f,    // 2
         -0.5f, 0.5f, 0.5f,   // 3
-        // Задняя грань
+
         -0.5f, -0.5f, -0.5f, // 4
         0.5f, -0.5f, -0.5f,  // 5
         0.5f, 0.5f, -0.5f,   // 6
         -0.5f, 0.5f, -0.5f   // 7
     )
 
-    // Порядок вершин для построения граней куба
+
     private val drawOrder = shortArrayOf(
         0, 1, 2, 0, 2, 3,  // передняя грань
         4, 5, 6, 4, 6, 7,  // задняя грань
@@ -33,7 +33,7 @@ class Cube {
         1, 2, 6, 1, 6, 5   // правая грань
     )
 
-    // Цвета куба для создания космической атмосферы
+
     private val color = floatArrayOf(0.1f, 0.1f, 0.2f, 1.0f) // темный сине-фиолетовый
 
     // Матрицы и угол вращения
@@ -64,7 +64,7 @@ class Cube {
     private val program: Int
 
     init {
-        // Инициализация буферов вершин и индексов
+
         val bb = ByteBuffer.allocateDirect(cubeCoords.size * 4)
         bb.order(ByteOrder.nativeOrder())
         vertexBuffer = bb.asFloatBuffer()
@@ -95,16 +95,16 @@ class Cube {
         // Используем программу
         GLES20.glUseProgram(program)
 
-        // Устанавливаем вершины
+
         val positionHandle = GLES20.glGetAttribLocation(program, "vPosition")
         GLES20.glEnableVertexAttribArray(positionHandle)
         GLES20.glVertexAttribPointer(positionHandle, 3, GLES20.GL_FLOAT, false, 12, vertexBuffer)
 
-        // Устанавливаем цвет
+
         val colorHandle = GLES20.glGetUniformLocation(program, "vColor")
         GLES20.glUniform4fv(colorHandle, 1, color, 0)
 
-        // Устанавливаем матрицу вращения и масштабирования
+
         angle += 0.5f
         Matrix.setRotateM(rotationMatrix, 0, angle, 0.5f, 1f, 0.3f)
         val modelMatrix = FloatArray(16)
@@ -114,14 +114,14 @@ class Cube {
         Matrix.multiplyMM(scratch, 0, mvpMatrix, 0, rotationMatrix, 0)
         Matrix.multiplyMM(scratch, 0, scratch, 0, modelMatrix, 0)
 
-        // Передаем матрицу в шейдер
+
         val mvpMatrixHandle = GLES20.glGetUniformLocation(program, "uMVPMatrix")
         GLES20.glUniformMatrix4fv(mvpMatrixHandle, 1, false, scratch, 0)
 
-        // Рисуем куб
+
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.size, GLES20.GL_UNSIGNED_SHORT, indexBuffer)
 
-        // Отключаем массив вершин
+        
         GLES20.glDisableVertexAttribArray(positionHandle)
     }
 
