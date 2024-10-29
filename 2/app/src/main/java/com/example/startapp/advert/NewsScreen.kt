@@ -39,7 +39,7 @@ import com.example.startapp.openGL.renderGL.MyGLSurfaceView
 @Composable
 fun NewsScreen(
     viewModel: NewsViewModel = viewModel(),
-    onImageClick: () -> Unit // Передаем функцию, которая будет вызвана при нажатии на картинку
+    onImageClick: () -> Unit
 ) {
     val currentNews = viewModel.currentNews
 
