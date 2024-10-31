@@ -5,8 +5,10 @@ import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import com.example.startapp.R
+import com.example.startapp.openGL.solarSystem.Cube
 import com.example.startapp.openGL.solarSystem.Moon
 import com.example.startapp.openGL.solarSystem.Planet
+import com.example.startapp.openGL.solarSystem.Square
 import com.example.startapp.openGL.solarSystem.Sun
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -19,6 +21,7 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
     private lateinit var moon: Moon
     private lateinit var planets: List<Planet>
     private lateinit var cube: Cube
+
     private var selectedPlanetIndex = 0
 
     private val projectionMatrix = FloatArray(16)

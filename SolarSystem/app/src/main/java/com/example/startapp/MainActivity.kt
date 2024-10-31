@@ -7,10 +7,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -25,7 +29,9 @@ import com.example.startapp.advert.NewsScreen
 import com.example.startapp.ui.theme.StartAppTheme
 import com.example.startapp.openGL.renderGL.MyGLSurfaceView
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -59,13 +65,13 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun OpenGLScreen() {
-        var selectedPlanetIndex by remember { mutableStateOf(0) }
+        var selectedPlanetIndex by remember { mutableIntStateOf(0) }
         val planetCount = 10
 
         val context = LocalContext.current
         val renderer = remember { MyGLRenderer(context) }
 
-        Box() {
+        Box(modifier = Modifier.fillMaxSize()) {
             AndroidView(
                 factory = { ctx ->
                     MyGLSurfaceView(ctx, renderer).apply {
@@ -74,30 +80,39 @@ class MainActivity : ComponentActivity() {
                 },
                 update = { view ->
                     view.setSelectedPlanet(selectedPlanetIndex)
-                },
-                modifier = Modifier.fillMaxSize()
+                }
             )
-        }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .background(color = Color.Transparent),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Button(onClick = {
-                selectedPlanetIndex =
-                    if (selectedPlanetIndex - 1 < 0) planetCount - 1 else selectedPlanetIndex - 1
-            }) {
-                Text("Влево")
-            }
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .wrapContentHeight(Alignment.Bottom)
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Button(onClick = {
+                        selectedPlanetIndex =
+                            if (selectedPlanetIndex - 1 < 0) planetCount - 1 else selectedPlanetIndex - 1
+                    }) {
+                        Text("Влево")
+                    }
 
+                    Button(onClick = {
+                    }) {
+                        Text("Информация")
+                    }
 
-            Button(onClick = {
-                selectedPlanetIndex = (selectedPlanetIndex + 1) % planetCount
-            }) {
-                Text("Вправо")
+                    Button(onClick = {
+                        selectedPlanetIndex = (selectedPlanetIndex + 1) % planetCount
+                    }) {
+                        Text("Вправо")
+                    }
+                }
             }
         }
     }

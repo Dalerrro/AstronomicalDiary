@@ -14,7 +14,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 abstract class CelestialObject(
-    val context: Context,
+    private val context: Context,
     val radius: Float,
     private val textureResId: Int
 ) {
@@ -51,6 +51,7 @@ abstract class CelestialObject(
     private val vertices: FloatArray
     private val indices: ShortArray
     private val textureCoords: FloatArray
+
     private val latitudeBands: Int = 40
     private val longitudeBands: Int = 40
 
@@ -197,7 +198,10 @@ abstract class CelestialObject(
     }
 }
 
-class Sun(context: Context, radius: Float, textureResId: Int) : CelestialObject(context, radius, textureResId) {
+class Sun(
+    context: Context,
+    radius: Float,
+    textureResId: Int):CelestialObject(context, radius, textureResId) {
     private var rotationAngle: Float = 0.0f
 
     override fun draw(mvpMatrix: FloatArray) {

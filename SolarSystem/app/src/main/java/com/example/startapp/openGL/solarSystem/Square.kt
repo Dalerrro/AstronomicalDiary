@@ -1,4 +1,4 @@
-package com.example.startapp.openGL
+package com.example.startapp.openGL.solarSystem
 
 import android.content.Context
 import android.graphics.BitmapFactory
@@ -33,7 +33,7 @@ class Square(private val context: Context) {
         vertexBuffer = createFloatBuffer(vertices)
         textureBuffer = createFloatBuffer(textureCoords)
 
-        textureId = loadTexture(R.drawable.galaxy1)
+        textureId = loadTexture(R.drawable.galaxy3)
 
         val vertexShaderCode = """
             attribute vec4 vPosition;
