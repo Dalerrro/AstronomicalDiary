@@ -272,6 +272,9 @@ class Moon(
 
         val moonRotationMatrix = FloatArray(16)
         Matrix.setIdentityM(moonRotationMatrix, 0)
+
+        //Matrix.rotateM(moonRotationMatrix, 0, 90f, 1f, 0f, 0f)
+
         Matrix.rotateM(moonRotationMatrix, 0, angle, 0f, 1f, 0f)
         Matrix.translateM(moonRotationMatrix, 0, orbitRadius, 0f, 0f)
 
