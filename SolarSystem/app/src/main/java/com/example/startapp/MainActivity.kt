@@ -40,6 +40,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.startapp.openGL.MyGLRenderer
+import com.example.startapp.openGL.solarSystem.InfoScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -47,24 +48,33 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             StartAppTheme {
-                val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = "news") {
-                    composable("news") {
-                        NewsScreen(
-                            onImageClick = { navController.navigate("opengl") }
-                        )
-                    }
-                    composable("opengl") {
-                        OpenGLScreen()
-                    }
-                }
+                MainNavRouter()
+            }
+        }
+    }
+}
+
+    @Composable
+    fun MainNavRouter() {
+        val navController = rememberNavController()
+        NavHost(navController = navController, startDestination = "news") {
+            composable("news") {
+                NewsScreen(
+                    onImageClick = { navController.navigate("opengl") }
+                )
+            }
+            composable("opengl") {
+                OpenGLScreen(navController)
+            }
+            composable("moon_info/{selectedPlanetIndex}") { backStackEntry ->
+                val selectedPlanetIndex = backStackEntry.arguments?.getString("selectedPlanetIndex")?.toInt() ?: 0
+                InfoScreen(selectedPlanetIndex = selectedPlanetIndex)
             }
         }
     }
 
-
     @Composable
-    fun OpenGLScreen() {
+    fun OpenGLScreen(navController: NavController) {
         var selectedPlanetIndex by remember { mutableIntStateOf(0) }
         val planetCount = 10
 
@@ -103,6 +113,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     Button(onClick = {
+                        navController.navigate("moon_info/$selectedPlanetIndex")
                     }) {
                         Text("Информация")
                     }
@@ -116,4 +127,3 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}

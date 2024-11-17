@@ -222,7 +222,7 @@ class Planet(
     radius: Float,
     textureResId: Int,
     val orbitRadius: Float,
-    private val orbitSpeed: Float,
+    val orbitSpeed: Float,
     private val rotationSpeed: Float
 ) : CelestialObject(context, radius, textureResId) {
     var orbitAngle: Float = 0.0f
@@ -270,16 +270,18 @@ class Moon(
         Matrix.rotateM(planetModelMatrix, 0, planet.orbitAngle, 0f, 1f, 0f)
         Matrix.translateM(planetModelMatrix, 0, planet.orbitRadius, 0f, 0f)
 
-        val moonRotationMatrix = FloatArray(16)
-        Matrix.setIdentityM(moonRotationMatrix, 0)
+        val moonOrbitMatrix = FloatArray(16)
+        Matrix.setIdentityM(moonOrbitMatrix, 0)
+        Matrix.rotateM(moonOrbitMatrix, 0, angle, 0f, 1f, 0f)
+        Matrix.translateM(moonOrbitMatrix, 0, orbitRadius, 0f, 0f)
 
-        //Matrix.rotateM(moonRotationMatrix, 0, 90f, 1f, 0f, 0f)
-
-        Matrix.rotateM(moonRotationMatrix, 0, angle, 0f, 1f, 0f)
-        Matrix.translateM(moonRotationMatrix, 0, orbitRadius, 0f, 0f)
+        val moonSelfRotationMatrix = FloatArray(16)
+        Matrix.setIdentityM(moonSelfRotationMatrix, 0)
+        Matrix.rotateM(moonSelfRotationMatrix, 0, angle, 0f, 0f, 1f)
 
         val finalMatrix = FloatArray(16)
-        Matrix.multiplyMM(finalMatrix, 0, planetModelMatrix, 0, moonRotationMatrix, 0)
+        Matrix.multiplyMM(finalMatrix, 0, moonOrbitMatrix, 0, moonSelfRotationMatrix, 0)
+        Matrix.multiplyMM(finalMatrix, 0, planetModelMatrix, 0, finalMatrix, 0)
         Matrix.multiplyMM(finalMatrix, 0, mvpMatrix, 0, finalMatrix, 0)
 
         super.draw(finalMatrix)
@@ -287,5 +289,23 @@ class Moon(
 
     fun getPosition(): FloatArray {
         return floatArrayOf(planet.orbitAngle, planet.orbitRadius, angle, orbitRadius)
+    }
+
+    companion object {
+        private const val VERTEX_SHADER_CODE = """
+            attribute vec4 a_Position;
+            uniform mat4 u_MVPMatrix;
+
+            void main() {
+                gl_Position = u_MVPMatrix * a_Position;
+            }
+        """
+
+        private const val FRAGMENT_SHADER_CODE = """
+            precision mediump float;
+            void main() {
+                gl_FragColor = vec4(1.0, 1.0, 1.0, 0.2);
+            }
+        """
     }
 }

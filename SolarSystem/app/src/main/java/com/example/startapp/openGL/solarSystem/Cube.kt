@@ -57,7 +57,7 @@ class Cube {
             precision mediump float;
             uniform float uAlpha;
             void main() {
-                gl_FragColor = vec4(0.0, 0.0, 0.5, uAlpha);
+                gl_FragColor = vec4(1, 1, 1, uAlpha);
             }
         """.trimIndent()
 

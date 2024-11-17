@@ -41,7 +41,7 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
         planets = listOf(
             Planet(context, 0.15f ,R.drawable.mercury, 1.0f, 1.1f, 0.1f),
             Planet(context, 0.19f, R.drawable.venus, 1.7f, 0.5f, 0.1f),
-            Planet(context, 0.2f * 2, R.drawable.earth, 2.4f * 2, 0.4f, 3f),
+            Planet(context, 0.2f, R.drawable.earth, 2.4f, 0.4f, 3f),
             Planet(context, 0.18f, R.drawable.mars, 3.3f, 0.3f, 3f),
             Planet(context, 0.4f, R.drawable.jupiter, 4.8f, 0.22f, 2f),
             Planet(context, 0.3f, R.drawable.saturn, 6f, 0.15f, 2f),
@@ -49,7 +49,7 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
             Planet(context, 0.28f, R.drawable.neptune, 8f, 0.08f, 2f),
         )
 
-        moon = Moon(context, 0.1f * 2, R.drawable.moon, planets[2], 0.4f * 2, 4f)
+        moon = Moon(context, .13f, R.drawable.moon, planets[2], .5f, 7f)
     }
 
     override fun onDrawFrame(gl: GL10?) {
@@ -69,7 +69,7 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
         val objectPosition : FloatArray
         if (selectedPlanetIndex < 8){
             objectPosition = planets[selectedPlanetIndex].getPosition()
-            objectRadius = planets[selectedPlanetIndex].radius + 0.05f
+            objectRadius = planets[selectedPlanetIndex].radius + 0.03f
         } else if (selectedPlanetIndex == 8){
             objectPosition = moon.getPosition()
             objectRadius = moon.radius
