@@ -22,35 +22,40 @@ fun InfoScreen(selectedPlanetIndex: Int) {
     val context = LocalContext.current
     val infoText = getObjectInfo(selectedPlanetIndex)
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            AndroidView(
-                factory = { ctx ->
-                    ObjectGLSurfaceView(ctx, selectedPlanetIndex)
-                },
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.Black)
+            .padding(bottom = 16.dp)
+    ) {
 
+        AndroidView(
+            factory = { ctx ->
+                ObjectGLSurfaceView(ctx, selectedPlanetIndex)
+            },
+            modifier = Modifier.fillMaxSize()
+        )
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
-                .background(color = Color.Transparent)
+                .background(
+                    color = Color(0xAA485B65),
+                    shape = MaterialTheme.shapes.medium
+                )
+                .padding(16.dp)
         ) {
             Text(
                 text = infoText,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Normal,
-                color = Color.LightGray,
+                color = Color.White,
                 textAlign = TextAlign.Left,
                 style = MaterialTheme.typography.bodyMedium
             )
         }
     }
-
+}
 
 fun getObjectInfo(index: Int): String {
     return when (index) {

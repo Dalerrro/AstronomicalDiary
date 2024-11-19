@@ -125,7 +125,7 @@ class InfoScreenObject(
             }
         }
 
-        shaderCompiler = ShaderCompiler(VERTEX_SHADER_CODE, FRAGMENT_SHADER_CODE)
+        shaderCompiler = ShaderCompiler(VERTEX_SHADER_CODE_PHONG, FRAGMENT_SHADER_CODE_PHONG)
 
         textureId = loadTexture(textureResId)
     }
@@ -204,7 +204,7 @@ class InfoScreenObject(
     }
 
     companion object {
-        private const val VERTEX_SHADER_CODE = """
+        private const val VERTEX_SHADER_CODE_PHONG = """
             uniform mat4 u_MVPMatrix;
             uniform mat4 u_ModelMatrix;
             uniform mat4 u_ViewMatrix;
@@ -219,50 +219,65 @@ class InfoScreenObject(
             
             void main() {
                 v_FragPos = vec3(u_ModelMatrix * vec4(a_Position, 1.0));
-                v_Normal = normalize(vec3(u_ModelMatrix * vec4(a_Normal, 0.0)));
-                v_TexCoord = a_TexCoord;  // Передаем текстурные координаты во фрагментный шейдер
+                v_Normal = mat3(u_ModelMatrix) * a_Normal;
+                v_TexCoord = a_TexCoord;
                 gl_Position = u_MVPMatrix * vec4(a_Position, 1.0);
             }
         """
 
-        private const val FRAGMENT_SHADER_CODE = """
+        private const val FRAGMENT_SHADER_CODE_PHONG = """
             precision mediump float;
-
+            
             uniform vec3 u_LightPos;
             uniform vec4 u_AmbientColor;
             uniform vec4 u_DiffuseColor;
             uniform vec4 u_SpecularColor;
             uniform float u_Shininess;
             
-            uniform sampler2D u_Texture;  // Текстура
             varying vec3 v_Normal;
             varying vec3 v_FragPos;
             varying vec2 v_TexCoord;
             
+            uniform sampler2D u_Texture;
+            
             void main() {
+                vec3 ambient = vec3(u_AmbientColor);
+                
                 vec3 norm = normalize(v_Normal);
                 vec3 lightDir = normalize(u_LightPos - v_FragPos);
-                
-                // Окружающий свет
-                vec4 ambient = u_AmbientColor;
-                
-                // Диффузное освещение
                 float diff = max(dot(norm, lightDir), 0.0);
-                vec4 diffuse = diff * u_DiffuseColor;
+                vec3 diffuse = diff * vec3(u_DiffuseColor);
                 
-                // Зеркальное освещение
-                vec3 viewDir = normalize(-v_FragPos);  // Вектор взгляда
+                vec3 viewDir = normalize(-v_FragPos);
                 vec3 reflectDir = reflect(-lightDir, norm);
                 float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_Shininess);
-                vec4 specular = spec * u_SpecularColor;
+                vec3 specular = spec * vec3(u_SpecularColor);
                 
-                // Получаем цвет из текстуры
                 vec4 textureColor = texture2D(u_Texture, v_TexCoord);
-                
-                // Итоговый цвет: комбинация освещения и текстуры
-                vec4 finalColor = (ambient + diffuse + specular) * textureColor;
-                gl_FragColor = finalColor;
+                vec3 result = (ambient + diffuse + specular) * textureColor.rgb;
+                gl_FragColor = vec4(result, 1.0);
             }
         """
+        const val BASIC_VERTEX_SHADER_CODE = """
+        uniform mat4 u_MVPMatrix;
+        attribute vec3 a_Position;
+        attribute vec2 a_TexCoord;
+        varying vec2 v_TexCoord;
+
+        void main() {
+            v_TexCoord = a_TexCoord;
+            gl_Position = u_MVPMatrix * vec4(a_Position, 1.0);
+        }
+    """
+
+        const val BASIC_FRAGMENT_SHADER_CODE = """
+        precision mediump float;
+        uniform sampler2D u_Texture;
+        varying vec2 v_TexCoord;
+
+        void main() {
+            gl_FragColor = texture2D(u_Texture, v_TexCoord);
+        }
+    """
     }
 }
