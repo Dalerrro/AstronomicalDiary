@@ -1,5 +1,6 @@
 package com.example.startapp.openGL
 
+import BlackHole
 import android.content.Context
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
@@ -12,6 +13,8 @@ import com.example.startapp.openGL.solarSystem.Square
 import com.example.startapp.openGL.solarSystem.Sun
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
+import kotlin.random.Random
+
 
 class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
     private var width = 0
@@ -22,11 +25,22 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
     private lateinit var planets: List<Planet>
     private lateinit var cube: Cube
 
+
+    private lateinit var blackHole: BlackHole
+    private var blackHolePosition = -15f
+    private var blackHoleSpeed = 0.01f
+
+    private var startPos = -10f
+    private var endPos = 10f
+
+
     private var selectedPlanetIndex = 0
 
     private val projectionMatrix = FloatArray(16)
     private val viewMatrix = FloatArray(16)
     private val mvpMatrix = FloatArray(16)
+
+
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES20.glEnable(GLES20.GL_DEPTH_TEST)
@@ -50,6 +64,8 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
         )
 
         moon = Moon(context, .13f, R.drawable.moon, planets[2], .5f, 7f)
+
+        blackHole = BlackHole(context, R.drawable.tophole)
     }
 
     override fun onDrawFrame(gl: GL10?) {
@@ -65,6 +81,12 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
         planets.forEach { it.draw(mvpMatrix) }
         moon.draw(mvpMatrix)
 
+        blackHolePosition += blackHoleSpeed
+        if (blackHolePosition < -15f) {
+            blackHolePosition = 15f
+        }
+
+
         val objectRadius : Float
         val objectPosition : FloatArray
         if (selectedPlanetIndex < 8){
@@ -79,6 +101,11 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
             objectRadius = sun.radius
         }
         cube.draw(mvpMatrix, objectPosition, objectRadius)
+
+        blackHole.draw(mvpMatrix, blackHolePosition)
+
+        blackHole.setScale(1.5f)
+
 
     }
 
@@ -97,4 +124,20 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
     fun setSelectedObjectIndex(index: Int) {
         selectedPlanetIndex = index
     }
+
+    val vertexShaderCode = """
+    uniform mat4 uMVPMatrix;
+    attribute vec4 aPosition;
+    void main() {
+        gl_Position = uMVPMatrix * aPosition;
+    }
+""".trimIndent()
+
+    val fragmentShaderCode = """
+    precision mediump float;
+    uniform vec4 uColor;
+    void main() {
+        gl_FragColor = uColor;
+    }
+""".trimIndent()
 }

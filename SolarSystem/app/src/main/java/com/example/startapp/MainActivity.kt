@@ -152,7 +152,7 @@ class MainActivity : ComponentActivity() {
                             contentScale = ContentScale.Inside
                         )
                     }
-                    
+
                     Button(
                         onClick = {
                             selectedPlanetIndex = (selectedPlanetIndex + 1) % planetCount
