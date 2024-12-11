@@ -84,27 +84,11 @@ void main() {
 
 val fragmentShaderCode = """
 precision mediump float;
-
-uniform vec3 uLightPos;
-uniform vec3 uAmbientLight;
-uniform vec3 uDiffuseLightColor;
-uniform vec3 uSpecularLightColor;
-uniform float uShininess;
-
-varying vec3 vNormalInterp;
-varying vec3 vPositionInterp;
+uniform vec4 uColor;
+uniform float uAlpha;
 
 void main() {
-    vec3 lightDir = normalize(uLightPos - vPositionInterp);
-    vec3 normal = normalize(vNormalInterp);
-
-    float diff = max(dot(normal, lightDir), 0.0);
-
-    vec3 viewDir = normalize(-vPositionInterp);
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), uShininess);
-
-    vec3 color = uAmbientLight + uDiffuseLightColor * diff + uSpecularLightColor * spec;
-    gl_FragColor = vec4(color, 0.5);
+    gl_FragColor = vec4(uColor.rgb, uAlpha); // Применяем альфа-канал
 }
+
 """.trimIndent();

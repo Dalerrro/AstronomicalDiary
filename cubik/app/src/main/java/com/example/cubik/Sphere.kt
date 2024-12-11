@@ -9,17 +9,17 @@ import java.nio.ByteOrder
 import java.nio.FloatBuffer
 import java.nio.ShortBuffer
 
-class Sphere(private val context: Context, private val radius: Float, private val textureResourceId: Int) {
+open class Sphere(private val context: Context, private val radius: Float, private val textureResourceId: Int) {
 
-    private val vertexBuffer: FloatBuffer
-    private val texCoordBuffer: FloatBuffer
-    private val indexBuffer: ShortBuffer
+    val vertexBuffer: FloatBuffer
+    val texCoordBuffer: FloatBuffer
+    val indexBuffer: ShortBuffer
     private var position = floatArrayOf(0f, 0f, 0f)
     private var program = -1
     private var textureHandle = -1
 
     init {
-        // Генерация вершин, индексов и UV-координат
+
         val (vertices, indices, texCoords) = generateSphere(radius, 30, 30)
         vertexBuffer = ByteBuffer.allocateDirect(vertices.size * 4)
             .order(ByteOrder.nativeOrder())
@@ -188,3 +188,73 @@ class Sphere(private val context: Context, private val radius: Float, private va
         return Triple(vertices.toFloatArray(), indices.toShortArray(), texCoords.toFloatArray())
     }
 }
+
+class Ellipsoid(context: Context, radiusX: Float, radiusY: Float, radiusZ: Float, textureResourceId: Int)
+    : Sphere(context, radiusX, textureResourceId) {
+
+    private val radiusY = radiusY
+    private val radiusZ = radiusZ
+
+    init {
+        // Переопределяем метод generateSphere для создания эллипсоида с учетом различных радиусов
+        val (vertices, indices, texCoords) = generateEllipsoid(radiusX, radiusY, radiusZ, 30, 30)
+
+        // Переопределим буферы для вершин, индексов и текстурных координат
+        vertexBuffer.clear()
+        vertexBuffer.put(vertices).position(0)
+
+        texCoordBuffer.clear()
+        texCoordBuffer.put(texCoords).position(0)
+
+        indexBuffer.clear()
+        indexBuffer.put(indices).position(0)
+    }
+
+    private fun generateEllipsoid(radiusX: Float, radiusY: Float, radiusZ: Float, latitudeBands: Int, longitudeBands: Int): Triple<FloatArray, ShortArray, FloatArray> {
+        val vertices = mutableListOf<Float>()
+        val texCoords = mutableListOf<Float>()
+        val indices = mutableListOf<Short>()
+
+        for (lat in 0..latitudeBands) {
+            val theta = lat * Math.PI / latitudeBands
+            val sinTheta = Math.sin(theta).toFloat()
+            val cosTheta = Math.cos(theta).toFloat()
+
+            for (lon in 0..longitudeBands) {
+                val phi = lon * 2 * Math.PI / longitudeBands
+                val sinPhi = Math.sin(phi).toFloat()
+                val cosPhi = Math.cos(phi).toFloat()
+
+                // Применяем различные радиусы для осей X, Y и Z
+                val x = cosPhi * sinTheta * radiusX
+                val y = cosTheta * radiusY  // Радиус Y для приплюснутой формы
+                val z = sinPhi * sinTheta * radiusZ // Радиус Z для вытянутой формы
+
+                vertices.add(x)
+                vertices.add(y)
+                vertices.add(z)
+
+                texCoords.add(lon / longitudeBands.toFloat())
+                texCoords.add(lat / latitudeBands.toFloat())
+            }
+        }
+
+        // Генерация индексов
+        for (lat in 0 until latitudeBands) {
+            for (lon in 0 until longitudeBands) {
+                val first = (lat * (longitudeBands + 1) + lon).toShort()
+                indices.add(first)
+                indices.add((first + 1).toShort())
+                indices.add((first + longitudeBands + 1).toShort())
+
+                indices.add((first + 1).toShort())
+                indices.add((first + longitudeBands + 2).toShort())
+                indices.add((first + longitudeBands + 1).toShort())
+            }
+        }
+
+        return Triple(vertices.toFloatArray(), indices.toShortArray(), texCoords.toFloatArray())
+    }
+}
+
+
